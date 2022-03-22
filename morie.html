@@ -261,5 +261,33 @@ function next() {
     requestAnimationFrame(next);
 }
 requestAnimationFrame(next);
+
+const profiler = new Profiler({
+    sampleInterval: 10, // Target sampling every 10ms
+    maxBufferSize: 10 * 100, // Cap at ~10s worth of samples
+});
+
+async function collectAndSendTrace() {
+    if (profiler.stopped) return;
+
+    const trace = await profiler.stop();
+    const traceJson = JSON.stringify({
+        timing: performance.timing,
+        trace,
+    });
+
+    // Send the trace JSON to a server via Fetch/XHR
+    console.log(trace);
+}
+
+const start = performance.now();
+let fib = 0;
+for (let i = 0; i < 1000000; i++) {
+     fib * i;
+}
+collectAndSendTrace()
+
+// profiler.addEventListener("samplebufferfull", collectAndSendTrace);
+// window.addEventListener("load", collectAndSendTrace);
 </script>
 </html>
